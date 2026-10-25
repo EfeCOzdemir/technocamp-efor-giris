@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: efor-giris
+  # Varsayılan profil: H2 (Oracle modu) ile kurulum gerektirmeden çalışır.
+  datasource:
+    url: jdbc:h2:mem:efor;MODE=Oracle;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
+      # Sütun adları ödevdeki tabloyla birebir (ör. AGENTID, "BEGIN") kullanılır.
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  seed-demo-data: true
+
+---
+# Oracle profili: --spring.profiles.active=oracle
+spring:
+  config:
+    activate:
+      on-profile: oracle
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521/XEPDB1}
+    username: ${DB_USERNAME:efor}
+    password: ${DB_PASSWORD:efor}
+  sql:
+    init:
+      # Tabloları db/oracle/schema.sql ile (ör. DBeaver üzerinden) bir kez oluşturun.
+      mode: never
+
+app:
+  seed-demo-data: ${SEED_DEMO_DATA:true}

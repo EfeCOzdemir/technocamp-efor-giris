@@ -1,0 +1,47 @@
+<mat-toolbar class="topbar">
+  <button mat-icon-button (click)="drawer.toggle()" aria-label="Menüyü aç/kapat">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <a class="brand" routerLink="/">
+    <mat-icon>schedule</mat-icon>
+    <span>Efor Takip</span>
+  </a>
+  <span class="spacer"></span>
+  @if (auth.user(); as user) {
+    <div class="user">
+      <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      <span class="name">
+        {{ user.firstName }} {{ user.surname }}
+        <small>{{ user.role === 'ADMIN' ? 'Yönetici' : 'Müşteri Temsilcisi' }} · {{ user.agentId }}</small>
+      </span>
+    </div>
+  }
+  <button mat-icon-button matTooltip="Çıkış yap" (click)="auth.logout()" aria-label="Çıkış yap">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-sidenav-container class="container">
+  <mat-sidenav #drawer [mode]="isMobile() ? 'over' : 'side'" [opened]="!isMobile()" class="sidenav">
+    <mat-nav-list>
+      <h3 class="section">Efor</h3>
+      <a mat-list-item routerLink="/performans-girisi" routerLinkActive #entry="routerLinkActive"
+         [activated]="entry.isActive" (click)="isMobile() && drawer.close()">
+        <mat-icon matListItemIcon>edit_calendar</mat-icon>
+        <span matListItemTitle>Performans Girişi</span>
+      </a>
+      @if (auth.isAdmin()) {
+        <h3 class="section">Yönetim</h3>
+        <a mat-list-item routerLink="/performans-raporu" routerLinkActive #report="routerLinkActive"
+           [activated]="report.isActive" (click)="isMobile() && drawer.close()">
+          <mat-icon matListItemIcon>monitoring</mat-icon>
+          <span matListItemTitle>Performans Raporu</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

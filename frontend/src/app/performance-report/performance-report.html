@@ -1,0 +1,115 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Performans Raporu</h1>
+      <p>Temsilcilerin efor kayıtlarını filtreleyin ve Excel olarak indirin.</p>
+    </div>
+  </header>
+
+  <form class="card filters" [formGroup]="filterForm" (ngSubmit)="search()">
+    <mat-form-field>
+      <mat-label>Müşteri temsilcisi</mat-label>
+      <mat-select formControlName="agentId">
+        <mat-option [value]="null">Tümü</mat-option>
+        @for (agent of agents(); track agent.agentId) {
+          <mat-option [value]="agent.agentId">{{ agent.fullName }} ({{ agent.agentId }})</mat-option>
+        }
+      </mat-select>
+      <mat-icon matPrefix>support_agent</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Tarih aralığı</mat-label>
+      <mat-date-range-input [rangePicker]="range">
+        <input matStartDate formControlName="from" placeholder="Başlangıç" />
+        <input matEndDate formControlName="to" placeholder="Bitiş" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="range" />
+      <mat-date-range-picker #range />
+    </mat-form-field>
+
+    <div class="filter-actions">
+      <button mat-button type="button" (click)="clear()">Temizle</button>
+      <button mat-flat-button type="submit" [disabled]="loading()">
+        <mat-icon>filter_alt</mat-icon>
+        Filtrele
+      </button>
+    </div>
+  </form>
+
+  <section class="stats">
+    <div class="stat"><span class="value">{{ totals().count }}</span><span class="label">Kayıt</span></div>
+    <div class="stat"><span class="value">{{ totals().agents }}</span><span class="label">Temsilci</span></div>
+    <div class="stat"><span class="value">{{ formatDuration(totals().net) }}</span><span class="label">Toplam net çalışma</span></div>
+    <div class="stat"><span class="value">{{ totals().excuse }} sa</span><span class="label">Toplam mazeret</span></div>
+  </section>
+
+  <section class="card">
+    <div class="card-toolbar">
+      <div>
+        <h2>Sonuçlar</h2>
+        <span class="applied">{{ appliedSummary() }}</span>
+      </div>
+      <button mat-flat-button (click)="download()" [disabled]="downloading() || rows().length === 0">
+        <mat-icon>download</mat-icon>
+        Excel indir
+      </button>
+    </div>
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort matSortActive="dateInfo" matSortDirection="desc">
+        <ng-container matColumnDef="fullName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Temsilci adı</th>
+          <td mat-cell *matCellDef="let row">{{ row.firstName }} {{ row.surname }}</td>
+        </ng-container>
+        <ng-container matColumnDef="agentId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sicil</th>
+          <td mat-cell *matCellDef="let row">{{ row.agentId }}</td>
+        </ng-container>
+        <ng-container matColumnDef="dateInfo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarih</th>
+          <td mat-cell *matCellDef="let row">{{ formatDate(row.dateInfo) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="beginTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Başlangıç</th>
+          <td mat-cell *matCellDef="let row">{{ row.beginTime }}</td>
+        </ng-container>
+        <ng-container matColumnDef="endTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Bitiş</th>
+          <td mat-cell *matCellDef="let row">{{ row.endTime }}</td>
+        </ng-container>
+        <ng-container matColumnDef="timeout">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mola (sa)</th>
+          <td mat-cell *matCellDef="let row">{{ row.timeout }}</td>
+        </ng-container>
+        <ng-container matColumnDef="excuse">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mazeret</th>
+          <td mat-cell *matCellDef="let row">
+            @if (row.excuse) {
+              <span class="chip">{{ row.excuse }}</span>
+            } @else {
+              <span class="muted">—</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="excuseHours">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mazeret saati</th>
+          <td mat-cell *matCellDef="let row">{{ row.excuseHours }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="empty" [attr.colspan]="columns.length">
+            <mat-icon>search_off</mat-icon>
+            Filtrelere uygun kayıt bulunamadı.
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" [pageSize]="10" showFirstLastButtons />
+  </section>
+</div>

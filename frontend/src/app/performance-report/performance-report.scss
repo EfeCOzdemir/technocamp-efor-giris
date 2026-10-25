@@ -1,0 +1,24 @@
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 20px 24px;
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+.applied {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 760px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

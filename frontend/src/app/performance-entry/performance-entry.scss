@@ -1,0 +1,55 @@
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-lowest);
+  box-shadow: var(--mat-sys-level1);
+
+  .week-label {
+    min-width: 190px;
+    text-align: center;
+    font: var(--mat-sys-title-small);
+  }
+}
+
+tr.editing td {
+  background: var(--mat-sys-secondary-container);
+}
+
+.actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.entry-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px 16px;
+  align-items: start;
+  padding: 20px 24px 24px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-lowest);
+  transition: background 0.2s;
+
+  &.is-editing {
+    background: color-mix(in srgb, var(--mat-sys-secondary-container) 45%, transparent);
+  }
+
+  .form-title {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: var(--mat-sys-title-small);
+    color: var(--mat-sys-primary);
+  }
+
+  .form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
